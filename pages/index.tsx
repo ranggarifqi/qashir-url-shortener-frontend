@@ -1,16 +1,29 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import MainLayout from "../components/layout/MainLayout";
-import { Form, Input, Button } from "antd";
-import { useCallback } from "react";
+import { Form, Button, Spin } from "antd";
+import { useCallback, useState } from "react";
 import RoundedTextInput from "../components/RounderTextInput";
+import { ICreateUrl } from "../model/url";
+import * as url from "../api/url";
 
 const URL_REGEX =
-  /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
+  /^(https?:\/\/)([\da-z\.-]+\.[a-z\.]{2,6}|[\d\.]+)([\/:?=&#]{1}[\da-z\.-]+)*[\/\?]?$/i;
 
 export default function Home() {
-  const onSubmit = useCallback((data) => {
-    console.log(data);
+  const [result, setResult] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = useCallback(async (payload: ICreateUrl) => {
+    setIsLoading(true);
+    const res = await url.create(payload);
+    setResult(res.url);
+    setIsLoading(false);
+  }, []);
+
+  const onReset = useCallback(() => {
+    setResult("");
+    setIsLoading(false);
   }, []);
 
   return (
@@ -25,20 +38,47 @@ export default function Home() {
         <h2 className={styles.title}>Shorten Your URL Here!</h2>
 
         <Form className={styles.form} name="urlShortener" onFinish={onSubmit}>
-          <Form.Item
-            name="url"
-            rules={[
-              { required: true, message: "Cannot empty!" },
-              { pattern: URL_REGEX, message: "Must be a url!" },
-            ]}
-          >
-            <RoundedTextInput size="large" style={{width: '40rem'}} />
-          </Form.Item>
+          {result ? (
+            <p>{result}</p>
+          ) : (
+            <Form.Item
+              name="url"
+              rules={[
+                { required: true, message: "Cannot empty!" },
+                {
+                  pattern: URL_REGEX,
+                  message: "Must be a url with http or https!",
+                },
+              ]}
+            >
+              <RoundedTextInput size="large" style={{ width: "40rem" }} />
+            </Form.Item>
+          )}
 
-          <Form.Item name="url" style={{marginTop: '5px'}}>
-            <Button className={styles.formButton} type="primary" htmlType="submit" size="large" block>
-              Submit
-            </Button>
+          <Form.Item name="url" style={{ marginTop: "5px" }}>
+            {result ? (
+              <Button
+                className={styles.formButton}
+                type="primary"
+                size="large"
+                block
+                onClick={onReset}
+              >
+                Submit Another
+              </Button>
+            ) : isLoading ? (
+              <Spin />
+            ) : (
+              <Button
+                className={styles.formButton}
+                type="primary"
+                htmlType="submit"
+                size="large"
+                block
+              >
+                Submit
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </main>
