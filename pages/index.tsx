@@ -34,6 +34,10 @@ export default function Home() {
     setIsLoading(false);
   }, []);
 
+  const onCopyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(result);
+  }, [result]);
+
   useEffect(() => {
     setBaseUrl(window.location.origin);
   }, []);
@@ -76,18 +80,28 @@ export default function Home() {
             </Form.Item>
           )}
 
-          <Form.Item name="url" style={{ marginTop: "5px" }}>
+          <Form.Item name="url" style={{ marginTop: "5px", width: '400px' }}>
             {result.length > 0 ? (
-              <Button
-                className={styles.formButton}
-                type="primary"
-                htmlType="button"
-                size="large"
-                block
-                onClick={onReset}
-              >
-                Submit Another
-              </Button>
+              <div className={styles.submitAnother}>
+                <Button
+                  className={styles.formButton}
+                  type="primary"
+                  htmlType="button"
+                  size="large"
+                  onClick={onCopyToClipboard}
+                >
+                  Copy to Clipboard
+                </Button>
+                <Button
+                  className={styles.formButton}
+                  type="primary"
+                  htmlType="button"
+                  size="large"
+                  onClick={onReset}
+                >
+                  Generate Another
+                </Button>
+              </div>
             ) : isLoading ? (
               <Spin />
             ) : (
@@ -97,8 +111,9 @@ export default function Home() {
                 htmlType="submit"
                 size="large"
                 block
+                loading={isLoading}
               >
-                Submit
+                Generate
               </Button>
             )}
           </Form.Item>
