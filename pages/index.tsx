@@ -6,29 +6,36 @@ import { useCallback, useState } from "react";
 import RoundedTextInput from "../components/RounderTextInput";
 import { ICreateUrl } from "../model/url";
 import * as url from "../api/url";
+import { useEffect } from "react";
 
 const URL_REGEX =
   /^(https?:\/\/)([\da-z\.-]+\.[a-z\.]{2,6}|[\d\.]+)([\/:?=&#]{1}[\da-z\.-]+)*[\/\?]?$/i;
 
-const BASE_URL = window.location.origin;
-
 export default function Home() {
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [baseUrl, setBaseUrl] = useState("");
 
-  const [formState] = Form.useForm()
+  const [formState] = Form.useForm();
 
-  const onSubmit = useCallback(async (payload: ICreateUrl) => {
-    setIsLoading(true);
-    const res = await url.create(payload);
-    setResult(`${BASE_URL}/${res.id}`);
-    setIsLoading(false);
-  }, []);
+  const onSubmit = useCallback(
+    async (payload: ICreateUrl) => {
+      setIsLoading(true);
+      const res = await url.create(payload);
+      setResult(`${baseUrl}/${res.id}`);
+      setIsLoading(false);
+    },
+    [baseUrl]
+  );
 
   const onReset = useCallback(() => {
     formState.resetFields();
     setResult("");
     setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setBaseUrl(window.location.origin);
   }, []);
 
   return (
@@ -42,7 +49,12 @@ export default function Home() {
       <main className={styles.main}>
         <h2 className={styles.title}>Qashir URL Shortener</h2>
 
-        <Form className={styles.form} form={formState} name="urlShortener" onFinish={onSubmit}>
+        <Form
+          className={styles.form}
+          form={formState}
+          name="urlShortener"
+          onFinish={onSubmit}
+        >
           {result.length > 0 ? (
             <p>{result}</p>
           ) : (
@@ -56,7 +68,11 @@ export default function Home() {
                 },
               ]}
             >
-              <RoundedTextInput size="large" style={{ width: "40rem" }} placeholder="Shorten Your URL Here!" />
+              <RoundedTextInput
+                size="large"
+                style={{ width: "40rem" }}
+                placeholder="Shorten Your URL Here!"
+              />
             </Form.Item>
           )}
 
