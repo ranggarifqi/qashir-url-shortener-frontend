@@ -3,6 +3,7 @@ import styles from "../styles/Home.module.css";
 import MainLayout from "../components/layout/MainLayout";
 import { Form, Input, Button } from "antd";
 import { useCallback } from "react";
+import RoundedTextInput from "../components/RounderTextInput";
 
 const URL_REGEX =
   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
@@ -23,7 +24,7 @@ export default function Home() {
       <main className={styles.main}>
         <h2 className={styles.title}>Shorten Your URL Here!</h2>
 
-        <Form name="urlShortener" onFinish={onSubmit}>
+        <Form className={styles.form} name="urlShortener" onFinish={onSubmit}>
           <Form.Item
             name="url"
             rules={[
@@ -31,11 +32,11 @@ export default function Home() {
               { pattern: URL_REGEX, message: "Must be a url!" },
             ]}
           >
-            <Input />
+            <RoundedTextInput size="large" style={{width: '40rem'}} />
           </Form.Item>
 
-          <Form.Item name="url">
-            <Button type="primary" htmlType="submit">
+          <Form.Item name="url" style={{marginTop: '5px'}}>
+            <Button className={styles.formButton} type="primary" htmlType="submit" size="large" block>
               Submit
             </Button>
           </Form.Item>
