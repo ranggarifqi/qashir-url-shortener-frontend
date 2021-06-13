@@ -78,6 +78,14 @@
   background-color: #00a86b;
   border-color: #00a86b;
 }
+.formButton:hover {
+  background-color: #006a43;
+  border-color: #00a86b;
+}
+.formButton:focus {
+  background-color: #006a43;
+  border-color: #00a86b;
+}
 
 .submitAnother {
   display: flex;
