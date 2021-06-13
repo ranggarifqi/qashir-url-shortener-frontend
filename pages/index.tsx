@@ -10,6 +10,8 @@ import * as url from "../api/url";
 const URL_REGEX =
   /^(https?:\/\/)([\da-z\.-]+\.[a-z\.]{2,6}|[\d\.]+)([\/:?=&#]{1}[\da-z\.-]+)*[\/\?]?$/i;
 
+const BASE_URL = window.location.origin;
+
 export default function Home() {
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function Home() {
   const onSubmit = useCallback(async (payload: ICreateUrl) => {
     setIsLoading(true);
     const res = await url.create(payload);
-    setResult(res.url);
+    setResult(`${BASE_URL}/${res.id}`);
     setIsLoading(false);
   }, []);
 
