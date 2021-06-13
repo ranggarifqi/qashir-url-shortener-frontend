@@ -14,6 +14,8 @@ export default function Home() {
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const [formState] = Form.useForm()
+
   const onSubmit = useCallback(async (payload: ICreateUrl) => {
     setIsLoading(true);
     const res = await url.create(payload);
@@ -22,6 +24,7 @@ export default function Home() {
   }, []);
 
   const onReset = useCallback(() => {
+    formState.resetFields();
     setResult("");
     setIsLoading(false);
   }, []);
@@ -37,8 +40,8 @@ export default function Home() {
       <main className={styles.main}>
         <h2 className={styles.title}>Shorten Your URL Here!</h2>
 
-        <Form className={styles.form} name="urlShortener" onFinish={onSubmit}>
-          {result ? (
+        <Form className={styles.form} form={formState} name="urlShortener" onFinish={onSubmit}>
+          {result.length > 0 ? (
             <p>{result}</p>
           ) : (
             <Form.Item
@@ -56,10 +59,11 @@ export default function Home() {
           )}
 
           <Form.Item name="url" style={{ marginTop: "5px" }}>
-            {result ? (
+            {result.length > 0 ? (
               <Button
                 className={styles.formButton}
                 type="primary"
+                htmlType="button"
                 size="large"
                 block
                 onClick={onReset}
